@@ -1,0 +1,14 @@
+{
+    "name": "google-ads-api",
+    "version": "0.0.1",
+    "description": "Google Ads API",
+    "scripts": {
+        "synth:dev": "ENV=dev npx cdk synth --profile expertise.com",
+        "deploy:prod": "npx cdk deploy --require-approval never",
+        "deploy:dev": "npx cdk deploy --profile expertise.com --require-approval never"
+    },
+    "dependencies": {
+        "aws-cdk": "^2.108.1",
+        "aws-cdk-lib": "^2.15.0"
+    }
+}

@@ -1,0 +1,31 @@
+---
+
+name: CDK Deployment
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  cdk_deployment:
+    name: AWS CDK deployment
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+      - run: echo CODEARTIFACT_AUTH_TOKEN=$(aws codeartifact get-authorization-token --domain expertise --domain-owner ${{ secrets.AWS_ACCOUNT_ID }} --query authorizationToken --output text --region ${{ secrets.AWS_REGION }} ) >> $GITHUB_ENV
+      - run: echo -e "--extra-index-url https://aws:${CODEARTIFACT_AUTH_TOKEN}@expertise-${{ secrets.AWS_ACCOUNT_ID }}.d.codeartifact.${{ secrets.AWS_REGION }}.amazonaws.com/pypi/data_warehouse/simple/\n$(cat requirements.txt)" > requirements.txt
+
+      - name: Install python dependencies
+        run: python -m pip install -r requirements.txt
+
+      - name: Install CDK
+        run: npm ci
+
+      - name: Deploy CDK
+        run: npx cdk deploy --require-approval never

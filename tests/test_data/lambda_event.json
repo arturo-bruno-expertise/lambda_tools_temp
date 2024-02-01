@@ -1,0 +1,6 @@
+{
+    "event": {
+        "name": "the name of the event"
+    },
+    "db_table": "db_table_name"
+}
